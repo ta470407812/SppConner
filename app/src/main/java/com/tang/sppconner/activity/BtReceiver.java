@@ -41,10 +41,7 @@ public class BtReceiver extends BroadcastReceiver {
                     btIntent.putExtra(BtConfig.Key.Cmd, intent.getStringExtra(BtConfig.Key.Cmd));
                 }
                 break;
-                default:
-                    break;
             }
-
             context.startService(btIntent);
         }
     }
