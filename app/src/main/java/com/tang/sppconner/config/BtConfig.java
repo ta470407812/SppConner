@@ -12,4 +12,9 @@ public interface BtConfig {
         String UUID = "uuid";//
         String Cmd = "cmd";//所携带的蓝牙数据
     }
+
+    interface CmdType {
+        byte Receive = 0x02;//接收到的spp命令
+        byte Send = 0x03;//发送出去的蓝牙命令
+    }
 }

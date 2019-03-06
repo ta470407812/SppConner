@@ -2,7 +2,7 @@ package com.tang.bluelibrary;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.tang.bluelibrary.callback.ConnectCallback;

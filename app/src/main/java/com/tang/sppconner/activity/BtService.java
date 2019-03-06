@@ -2,22 +2,26 @@ package com.tang.sppconner.activity;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.os.Message;
+import androidx.annotation.Nullable;
 
 import com.tang.bluelibrary.ArrayUtil;
 import com.tang.bluelibrary.SppConnector;
 import com.tang.bluelibrary.callback.ConnectCallback;
+import com.tang.sppconner.bean.CmdBean;
 import com.tang.sppconner.config.BtConfig;
+import com.tang.sppconner.manager.CmdBeanManager;
 import com.tang.sppconner.utils.BytesUtils;
 import com.tang.sppconner.utils.SimpleLog;
 
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import io.realm.Realm;
 
 public class BtService extends Service implements ConnectCallback {
 
@@ -25,10 +29,27 @@ public class BtService extends Service implements ConnectCallback {
     private BluetoothAdapter bluetoothAdapter;
     private boolean connected;
     private CopyOnWriteArrayList<IBtService> iBtServiceList = new CopyOnWriteArrayList<>();
+    private Realm realm;
+
+    private final byte SAVE_CMD_DATA = 0x02;
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case SAVE_CMD_DATA: {
+                    CmdBeanManager.addCmdBean(realm, (CmdBean) msg.obj);
+                }
+                break;
+            }
+            return true;
+        }
+    });
 
     @Override
     public void onCreate() {
         super.onCreate();
+        realm = Realm.getDefaultInstance();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         sppConnector = new SppConnector();
         sppConnector.addConnectCallback(this);
@@ -36,6 +57,7 @@ public class BtService extends Service implements ConnectCallback {
 
     @Override
     public void onDestroy() {
+        realm.close();
         iBtServiceList.clear();
         super.onDestroy();
     }
@@ -101,6 +123,7 @@ public class BtService extends Service implements ConnectCallback {
                     if (bluetoothAdapter.isEnabled()) {
                         if (sppConnector.isConningState()) {
                             SimpleLog.print(this.getClass(), "write " + cmd);
+                            toSaveCmdData(cmdBytes, BtConfig.CmdType.Send);
                             sppConnector.write(cmdBytes);
                         }
                     }
@@ -122,6 +145,7 @@ public class BtService extends Service implements ConnectCallback {
 
     @Override
     public void onReceive(byte[] data) {
+        toSaveCmdData(data, BtConfig.CmdType.Receive);
         SimpleLog.print(this.getClass(), "spp onReceive " + ArrayUtil.toHex(data));
     }
 
@@ -140,6 +164,18 @@ public class BtService extends Service implements ConnectCallback {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    private void toSaveCmdData(byte[] cmdBytes, byte sendOrReceiver) {
+        if (null == cmdBytes
+                || cmdBytes.length == 0)
+            return;
+        CmdBean cmdBean = new CmdBean();
+        cmdBean.setCmdData(cmdBytes);
+        cmdBean.setCmdType(BtConfig.CmdType.Send);
+        cmdBean.setCmdTime(new Date());
+        Message message = Message.obtain(handler, SAVE_CMD_DATA, cmdBean);
+        message.sendToTarget();
     }
 
     public interface IBtService {

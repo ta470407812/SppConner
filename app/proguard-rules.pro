@@ -30,12 +30,20 @@
 -keep class com.google.android.**{*;}
 -keep class com.google.android.gms.**{*;}
 -keep class com.google.**
+-keep class android.**
+-keep class androidx.**
+-keep class io.realm.**
+-keep class com.tang.**
 -keep class pl.tajchert.nammu.**{*;}
 
 -dontwarn com.google.android.gms.**
 -dontwarn com.google.android.**
 -dontwarn com.google.**
+-dontwarn android.**
+-dontwarn androidx.**
 
 -dontwarn android.support.**
 -dontwarn com.android.support.appcompat-v7.**
 -dontwarn com.android.support.support-v4.**
+-dontwarn io.realm.**
+-dontwarn com.tang.**
