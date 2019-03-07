@@ -1,4 +1,4 @@
-package com.tang.sppconner.activity;
+package com.tang.sppconner.base;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+
+import com.tang.sppconner.activity.BtService;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-public abstract class BaseBtServiceActivity extends AppCompatActivity {
+public abstract class BaseBtServiceActivity extends BaseButterKnifeActivity {
     protected BtService btService;
 
     @Override

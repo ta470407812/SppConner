@@ -1,28 +1,34 @@
 package com.tang.sppconner.activity;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+import io.reactivex.Observable;
 import pl.tajchert.nammu.Nammu;
 import pl.tajchert.nammu.PermissionCallback;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import com.tang.sppconner.R;
+import com.tang.sppconner.base.BaseBtServiceActivity;
+import com.tang.sppconner.utils.SimpleLog;
 
 public class MainActivity extends BaseBtServiceActivity implements
-        View.OnClickListener,
-        PermissionCallback,
         BtService.IBtService {
 
-    private TextView btn_location;
-    private TextView btn_conn_state;
+    @BindView(R.id.btn_location)
+    TextView btn_location;
+    @BindView(R.id.btn_conn_state)
+    TextView btn_conn_state;
 
     private final byte UPDATE_CONN_STATE = 0x02;
+    private final byte UPDATE_LOCATION = 0x03;
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -31,28 +37,36 @@ public class MainActivity extends BaseBtServiceActivity implements
                 case UPDATE_CONN_STATE:
                     updateConnState();
                     break;
+                case UPDATE_LOCATION:
+                    btn_location.setText(Nammu.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                            ? "获取定位权限成功"
+                            : "获取定位权限失败");
+                    break;
             }
             return true;
         }
     });
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        btn_location = findViewById(R.id.btn_location);
-        btn_conn_state = findViewById(R.id.btn_conn_state);
+    protected int getLayoutResID() {
+        return R.layout.activity_main;
+    }
 
-        btn_location.setOnClickListener(this);
-        btn_location.setText(Nammu.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                ? "获取定位权限成功"
-                : "获取定位权限失败");
+    @Override
+    protected void initView() {
+        handler.sendEmptyMessage(UPDATE_LOCATION);
+    }
+
+    @Override
+    protected void initData() {
+
     }
 
     @Override
     protected void onDestroy() {
         if (null != handler) {
             handler.removeMessages(UPDATE_CONN_STATE);
+            handler.removeMessages(UPDATE_LOCATION);
             handler = null;
         }
         super.onDestroy();
@@ -74,37 +88,20 @@ public class MainActivity extends BaseBtServiceActivity implements
 
     }
 
-    @Override
+    @OnClick({R.id.btn_location,
+            R.id.btn_conn_history,
+            R.id.btn_cmd_history})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_location:
-                Nammu.askForPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, this);
+                Nammu.askForPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, permissionCallback);
+                break;
+            case R.id.btn_conn_history:
+                break;
+            case R.id.btn_cmd_history:
+                startActivity(new Intent(this, CmdHistoryActivity.class));
                 break;
         }
-    }
-
-    @Override
-    public void permissionGranted() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                btn_location.setText(Nammu.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        ? "获取定位权限成功"
-                        : "获取定位权限失败");
-            }
-        });
-    }
-
-    @Override
-    public void permissionRefused() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                btn_location.setText(Nammu.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        ? "获取定位权限成功"
-                        : "获取定位权限失败");
-            }
-        });
     }
 
     @Override
@@ -122,4 +119,18 @@ public class MainActivity extends BaseBtServiceActivity implements
                 ? Color.GREEN
                 : Color.RED);
     }
+
+    private PermissionCallback permissionCallback = new PermissionCallback() {
+        @Override
+        public void permissionGranted() {
+            SimpleLog.print(this.getClass(), "permissionGranted");
+            handler.sendEmptyMessage(UPDATE_LOCATION);
+        }
+
+        @Override
+        public void permissionRefused() {
+            SimpleLog.print(this.getClass(), "permissionRefused");
+            handler.sendEmptyMessage(UPDATE_CONN_STATE);
+        }
+    };
 }

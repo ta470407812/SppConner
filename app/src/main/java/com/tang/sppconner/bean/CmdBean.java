@@ -10,7 +10,7 @@ public class CmdBean extends RealmObject {
     private byte cmdType;//蓝牙类型
     private byte[] cmdData;//具体数据
     @PrimaryKey
-    private Date cmdTime;//发生的时间
+    private long cmdTime;//发生的时间
     private String msg;//备注信息
 
     public byte getCmdType() {
@@ -29,11 +29,11 @@ public class CmdBean extends RealmObject {
         this.cmdData = cmdData;
     }
 
-    public Date getCmdTime() {
+    public long getCmdTime() {
         return cmdTime;
     }
 
-    public void setCmdTime(Date cmdTime) {
+    public void setCmdTime(long cmdTime) {
         this.cmdTime = cmdTime;
     }
 

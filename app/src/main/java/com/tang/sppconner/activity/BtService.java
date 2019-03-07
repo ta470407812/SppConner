@@ -7,6 +7,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+
 import androidx.annotation.Nullable;
 
 import com.tang.bluelibrary.ArrayUtil;
@@ -172,10 +173,17 @@ public class BtService extends Service implements ConnectCallback {
             return;
         CmdBean cmdBean = new CmdBean();
         cmdBean.setCmdData(cmdBytes);
-        cmdBean.setCmdType(BtConfig.CmdType.Send);
-        cmdBean.setCmdTime(new Date());
+        cmdBean.setCmdType(sendOrReceiver);
+        cmdBean.setCmdTime(System.currentTimeMillis());
         Message message = Message.obtain(handler, SAVE_CMD_DATA, cmdBean);
         message.sendToTarget();
+    }
+
+    public void sendCmd(byte[] bytes) {
+        if (isConnected()) {
+            toSaveCmdData(bytes, BtConfig.CmdType.Send);
+            sppConnector.write(bytes);
+        }
     }
 
     public interface IBtService {
