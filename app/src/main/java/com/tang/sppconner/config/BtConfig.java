@@ -1,6 +1,9 @@
 package com.tang.sppconner.config;
 
 public interface BtConfig {
+    String BUGLY_ID = "fc35e14dbf";
+    boolean IS_DEBUG = true;
+
     interface Action {
         String Open_Bluetooth = "com.SppConner.Action.Open_Bluetooth";
         String Close_Bluetooth = "com.SppConner.Action.Close_Bluetooth";

@@ -46,4 +46,5 @@ dependencies {
 // (see https://github.com/ReactiveX/RxJava/releases for latest 2.x.x version)
     implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
 
+    implementation 'com.tencent.bugly:crashreport:2.8.6'
 }

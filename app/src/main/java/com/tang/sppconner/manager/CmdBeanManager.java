@@ -28,7 +28,10 @@ public class CmdBeanManager {
     public static RealmResults<CmdBean> getAllCmdBeans(Realm realm) {
         if (null == realm)
             return null;
-        return realm.where(CmdBean.class).findAll().sort("cmdTime",
-                Sort.DESCENDING);
+        return realm
+                .where(CmdBean.class)
+                .findAll()
+                .sort("cmdTime",
+                        Sort.DESCENDING);
     }
 }

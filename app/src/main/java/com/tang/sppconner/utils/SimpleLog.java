@@ -2,9 +2,11 @@ package com.tang.sppconner.utils;
 
 import android.util.Log;
 
+import com.tang.sppconner.config.BtConfig;
+
 public class SimpleLog {
     private static final String TAG = "SimpleLog";
-    private static final boolean IS_BUG = true;
+    private static final boolean IS_BUG = BtConfig.IS_DEBUG;
 
     public static void print(Class<?> cls, String txt) {
         if (IS_BUG)
