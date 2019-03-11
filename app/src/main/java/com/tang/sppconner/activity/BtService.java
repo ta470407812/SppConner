@@ -2,6 +2,7 @@ package com.tang.sppconner.activity;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
@@ -13,8 +14,10 @@ import androidx.annotation.Nullable;
 import com.tang.bluelibrary.ArrayUtil;
 import com.tang.bluelibrary.SppConnector;
 import com.tang.bluelibrary.callback.ConnectCallback;
+import com.tang.sppconner.bean.BtConnBean;
 import com.tang.sppconner.bean.CmdBean;
 import com.tang.sppconner.config.BtConfig;
+import com.tang.sppconner.manager.BtConnBeanManager;
 import com.tang.sppconner.manager.CmdBeanManager;
 import com.tang.sppconner.utils.BytesUtils;
 import com.tang.sppconner.utils.SimpleLog;
@@ -108,9 +111,7 @@ public class BtService extends Service implements ConnectCallback {
                         .Action.Conn_Spp: {
                     if (bluetoothAdapter.isEnabled()) {
                         String uuid = intent.getStringExtra(BtConfig.Key.UUID);
-                        if (BluetoothAdapter.checkBluetoothAddress(uuid)) {
-                            sppConnector.connect(bluetoothAdapter.getRemoteDevice(uuid), true);
-                        }
+                        connDevice(uuid);
                     }
                 }
                 break;
@@ -183,6 +184,20 @@ public class BtService extends Service implements ConnectCallback {
         if (isConnected()) {
             toSaveCmdData(bytes, BtConfig.CmdType.Send);
             sppConnector.write(bytes);
+        }
+    }
+
+    public void connDevice(String uuid) {
+        if (BluetoothAdapter.checkBluetoothAddress(uuid)) {
+            BluetoothDevice bluetoothDevice=bluetoothAdapter.getRemoteDevice(uuid);
+
+            BtConnBean btConnBean = new BtConnBean();
+            btConnBean.setConnTime(System.currentTimeMillis());
+            btConnBean.setName(bluetoothDevice.getName());
+            btConnBean.setUuid(bluetoothDevice.getAddress());
+
+            BtConnBeanManager.addBtConnBean(realm, btConnBean);
+            sppConnector.connect(bluetoothDevice, true);
         }
     }
 

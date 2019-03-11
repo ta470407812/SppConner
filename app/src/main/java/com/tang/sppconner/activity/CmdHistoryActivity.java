@@ -1,8 +1,6 @@
 package com.tang.sppconner.activity;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,17 +21,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 import io.realm.OrderedCollectionChangeSet;
 import io.realm.OrderedRealmCollectionChangeListener;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import pl.tajchert.nammu.Nammu;
 
 public class CmdHistoryActivity extends BaseBtServiceActivity implements AdapterView.OnItemClickListener {
 
     @BindView(R.id.list_view)
     ListView listView;
+    @BindView(R.id.btn_title)
+    TextView textTitle;
 
     private Realm realm;
     private RealmResults<CmdBean> realmResults;
@@ -74,6 +72,7 @@ public class CmdHistoryActivity extends BaseBtServiceActivity implements Adapter
     @Override
     protected void initView() {
         listView.setOnItemClickListener(this);
+        textTitle.setText("命令历史");
     }
 
     @Override
@@ -107,7 +106,7 @@ public class CmdHistoryActivity extends BaseBtServiceActivity implements Adapter
                 cmdAdapter.notifyDataSetChanged();
             }
         });
-        cmdAdapter = new CmdAdapter(this, R.layout.item_history, realmResults);
+        cmdAdapter = new CmdAdapter(this, R.layout.item_cmd_history, realmResults);
         listView.setAdapter(cmdAdapter);
     }
 

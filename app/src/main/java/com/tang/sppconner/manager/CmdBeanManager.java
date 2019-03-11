@@ -9,7 +9,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class CmdBeanManager {
+public final class CmdBeanManager {
     public static void addCmdBean(Realm realm, CmdBean cmdBean) {
         if (null == realm
                 || null == cmdBean)

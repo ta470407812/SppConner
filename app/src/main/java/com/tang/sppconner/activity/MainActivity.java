@@ -97,6 +97,7 @@ public class MainActivity extends BaseBtServiceActivity implements
                 Nammu.askForPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, permissionCallback);
                 break;
             case R.id.btn_conn_history:
+                startActivity(new Intent(this, BtConnHistoryActivity.class));
                 break;
             case R.id.btn_cmd_history:
                 startActivity(new Intent(this, CmdHistoryActivity.class));
@@ -130,7 +131,7 @@ public class MainActivity extends BaseBtServiceActivity implements
         @Override
         public void permissionRefused() {
             SimpleLog.print(this.getClass(), "permissionRefused");
-            handler.sendEmptyMessage(UPDATE_CONN_STATE);
+            handler.sendEmptyMessage(UPDATE_LOCATION);
         }
     };
 }

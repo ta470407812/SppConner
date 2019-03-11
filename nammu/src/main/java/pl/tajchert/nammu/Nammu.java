@@ -99,12 +99,12 @@ public class Nammu {
         return false;
     }
 
-    public static void askForPermission(AppCompatActivity activity, String permission,
+    public static void askForPermission(Activity activity, String permission,
                                         PermissionCallback permissionCallback) {
         askForPermission(activity, new String[]{permission}, permissionCallback);
     }
 
-    public static void askForPermission(AppCompatActivity activity, String[] permissions,
+    public static void askForPermission(Activity activity, String[] permissions,
                                         PermissionCallback permissionCallback) {
         if (permissionCallback == null) {
             return;
