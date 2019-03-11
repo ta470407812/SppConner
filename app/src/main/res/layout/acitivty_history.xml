@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/btn_back"
-            android:layout_width="80dp"
+            android:layout_width="60dp"
             android:layout_height="50dp"
             android:gravity="center"
             android:text="返回"
@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/btn_save"
-            android:layout_width="80dp"
+            android:layout_width="60dp"
             android:layout_height="50dp"
             android:gravity="center"
             android:text="保存"
