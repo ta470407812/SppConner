@@ -182,6 +182,7 @@ public class BtService extends Service implements ConnectCallback {
 
     public void sendCmd(byte[] bytes) {
         if (isConnected()) {
+            SimpleLog.print(this.getClass(), "sendCmd " + BytesUtils.bytes2Hex(bytes));
             toSaveCmdData(bytes, BtConfig.CmdType.Send);
             sppConnector.write(bytes);
         }
@@ -189,7 +190,7 @@ public class BtService extends Service implements ConnectCallback {
 
     public void connDevice(String uuid) {
         if (BluetoothAdapter.checkBluetoothAddress(uuid)) {
-            BluetoothDevice bluetoothDevice=bluetoothAdapter.getRemoteDevice(uuid);
+            BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(uuid);
 
             BtConnBean btConnBean = new BtConnBean();
             btConnBean.setConnTime(System.currentTimeMillis());
