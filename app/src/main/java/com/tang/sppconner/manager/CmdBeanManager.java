@@ -1,5 +1,6 @@
 package com.tang.sppconner.manager;
 
+import com.tang.sppconner.bean.BtConnBean;
 import com.tang.sppconner.bean.CmdBean;
 import com.tang.sppconner.utils.SimpleLog;
 
@@ -14,11 +15,14 @@ public final class CmdBeanManager {
         if (null == realm
                 || null == cmdBean)
             return;
-        boolean hasBean = realm.where(CmdBean.class)
+        RealmResults<CmdBean> realmResults = realm.where(CmdBean.class)
                 .equalTo("cmdData", cmdBean.getCmdData())
                 .equalTo("cmdType", cmdBean.getCmdType())
-                .findAll().size() > 0;
-        if (!hasBean) {
+                .findAll();
+        boolean hasBean = (null != realmResults && realmResults.size() > 0);
+        if (hasBean) {
+            updateCmdBean(realm, realmResults.get(0));
+        } else {
             realm.beginTransaction();
             realm.copyToRealm(cmdBean);
             realm.commitTransaction();
@@ -33,5 +37,14 @@ public final class CmdBeanManager {
                 .findAll()
                 .sort("cmdTime",
                         Sort.DESCENDING);
+    }
+
+    private static void updateCmdBean(Realm realm, CmdBean cmdBean) {
+        if (null == realm
+                || null == cmdBean)
+            return;
+        realm.beginTransaction();
+        cmdBean.setCmdTime(System.currentTimeMillis());
+        realm.commitTransaction();
     }
 }

@@ -9,7 +9,6 @@ public class CmdBean extends RealmObject {
 
     private byte cmdType;//蓝牙类型
     private byte[] cmdData;//具体数据
-    @PrimaryKey
     private long cmdTime;//发生的时间
     private String msg;//备注信息
 

@@ -3,7 +3,10 @@ package com.tang.sppconner.manager;
 import com.tang.sppconner.bean.BtConnBean;
 import com.tang.sppconner.bean.CmdBean;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.realm.Realm;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -12,10 +15,13 @@ public final class BtConnBeanManager {
         if (null == realm
                 || null == btConnBean)
             return;
-        boolean hasBean = realm.where(BtConnBean.class)
+        RealmResults<BtConnBean> realmResults = realm.where(BtConnBean.class)
                 .equalTo("uuid", btConnBean.getUuid())
-                .findAll().size() > 0;
-        if (!hasBean) {
+                .findAll();
+        boolean hasBean = (null != realmResults && realmResults.size() > 0);
+        if (hasBean) {
+            updateBtConnTime(realm, realmResults.get(0));
+        } else {
             realm.beginTransaction();
             realm.copyToRealm(btConnBean);
             realm.commitTransaction();
@@ -30,5 +36,14 @@ public final class BtConnBeanManager {
                 .findAll()
                 .sort("connTime",
                         Sort.DESCENDING);
+    }
+
+    private static void updateBtConnTime(Realm realm, BtConnBean btConnBean) {
+        if (null == realm
+                || null == btConnBean)
+            return;
+        realm.beginTransaction();
+        btConnBean.setConnTime(System.currentTimeMillis());
+        realm.commitTransaction();
     }
 }

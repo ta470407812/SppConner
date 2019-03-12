@@ -79,8 +79,9 @@ public class CmdHistoryActivity extends BaseBtServiceActivity implements Adapter
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         CmdBean cmdBean = realmResults.get(position);
         if (null != cmdBean
-                && cmdBean.getCmdType() == BtConfig.CmdType.Send)
+                && cmdBean.getCmdType() == BtConfig.CmdType.Send) {
             btService.sendCmd(cmdBean.getCmdData());
+        }
     }
 
     @OnClick({R.id.btn_back,
